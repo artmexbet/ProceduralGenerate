@@ -1355,6 +1355,7 @@ MonoBehaviour:
   upperLimit: {x: 2, y: 10}
   rightLimit: {x: -10, y: 10}
   leftLimit: {x: -10, y: 10}
+  sensitivity: 1.5
 --- !u!4 &1570593003
 Transform:
   m_ObjectHideFlags: 0
