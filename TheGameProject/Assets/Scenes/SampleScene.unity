@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -750,13 +750,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1127239711}
-        m_MethodName: Generate
-        m_Mode: 1
+      - m_Target: {fileID: 1665963912}
+        m_MethodName: GenerateMatrix
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1010
+          m_IntArgument: 100
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1284,7 +1284,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1435007286}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1665963912}
+        m_MethodName: SpawnTile
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7785147456425118569, guid: e1416544511ac67479c7f48b74e68c93,
+            type: 3}
+          m_ObjectArgumentAssemblyTypeName: Building, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1435007286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1351,11 +1363,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f36160f1ad3ff4790d33e068296a0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.3
-  upperLimit: {x: 2, y: 10}
-  rightLimit: {x: -10, y: 10}
-  leftLimit: {x: -10, y: 10}
-  sensitivity: 1.5
+  movementSpeed: 0.35
+  upperLimit: {x: 4, y: 10}
+  rightLimit: {x: -3, y: 10}
+  leftLimit: {x: -3, y: 10}
+  sensitivity: 1.8
 --- !u!4 &1570593003
 Transform:
   m_ObjectHideFlags: 0
@@ -1381,6 +1393,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1665963913}
   - component: {fileID: 1665963912}
+  - component: {fileID: 1665963914}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -1400,6 +1413,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe11812c0204eeb4b97c7b20aa038525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridSize: {x: 20, y: 20}
+  prefabs:
+  - {fileID: 4801745978664668259, guid: ebed284f03abfdc42a830d89da30c96b, type: 3}
+  - {fileID: 4801745978664668259, guid: 981d7ec9f6bdad647b028e1d0a0ba629, type: 3}
+  - {fileID: 4801745978664668259, guid: 47e118cf180e3d147b566fdd9cde0c62, type: 3}
+  - {fileID: 4801745978664668259, guid: 5a3b84469aa199d4ea1a9cd209eef30e, type: 3}
+  - {fileID: 4801745978664668259, guid: 42d0cc0d877dbd14ebd3f9e567d88e75, type: 3}
+  - {fileID: 4801745978664668259, guid: f6c1c70d287f3674dbc45fc5cdb1a24f, type: 3}
+  - {fileID: 4801745978664668259, guid: 5abd535db8a60494b9cf61708360918f, type: 3}
+  - {fileID: 4801745978664668259, guid: 69cd66a3ed58cef4f95d366642c8ed84, type: 3}
+  - {fileID: 4801745978664668259, guid: 418e94f4e8791d74f869a71a6eecfd60, type: 3}
+  - {fileID: 4801745978664668259, guid: 230e222d89c328746be3c3e6b43c18ae, type: 3}
+  - {fileID: 4801745978664668259, guid: f6b2fd5ff3ce81546906a6a2b6e2417a, type: 3}
+  - {fileID: 4801745978664668259, guid: 2d4d49582b3dc8449899ec3eda8c43af, type: 3}
+  - {fileID: 4801745978664668259, guid: d94810053e955e84a99d25d813dd73de, type: 3}
 --- !u!4 &1665963913
 Transform:
   m_ObjectHideFlags: 0
@@ -1414,6 +1442,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1665963914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665963911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea2643526df1e434c9e397157705caf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2099757358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,7 +1661,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c4a33bd197f4b8143a66f7d05b3904c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1658,7 +1698,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2120393671}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.024259793, y: 0.011007037, z: -0.10136224}
+  m_LocalPosition: {x: 4.5, y: 0, z: 4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1746,11 +1786,11 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1127239711}
+      - m_Target: {fileID: 1665963912}
         m_MethodName: SpawnTile
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 2741649855161625598, guid: 25d3ab0581fd0db4eb7a95e5a14d2c7c,
+          m_ObjectArgument: {fileID: 7785147456425118569, guid: c7ac2847a50970849ab6023fecb28ba2,
             type: 3}
           m_ObjectArgumentAssemblyTypeName: Building, Assembly-CSharp
           m_IntArgument: 0
