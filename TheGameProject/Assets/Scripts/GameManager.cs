@@ -122,13 +122,18 @@ public class GameManager : MonoBehaviour
         return tempMatrix;
     }
 
-    bool RoadNeighbours(int x, int y)
+    int RoadNeighbours(int x, int y, int x0, int y0)
     {
-        if (x - 1 >= 0 && (matrix[x - 1, y] == 12 || matrix[x - 1, y] == -1)) return true;
-        if (x + 1 < n && (matrix[x + 1, y] == 12 || matrix[x + 1, y] == -1)) return true;
-        if (y - 1 >= 0 && (matrix[x, y - 1] == 12 || matrix[x, y - 1] == -1)) return true;
-        if (y + 1 < n && (matrix[x, y + 1] == 12 || matrix[x, y + 1] == -1)) return true;
-        return false;
+        n = 0;
+        if (x - 1 >= 0 && (matrix[x - 1, y] == 12 || matrix[x - 1, y] == -1) && x-1!=x0)
+            n++;
+        if (x + 1 < n && (matrix[x + 1, y] == 12 || matrix[x + 1, y] == -1) && x + 1 != x0)
+            n++;
+        if (y - 1 >= 0 && (matrix[x, y - 1] == 12 || matrix[x, y - 1] == -1) && y - 1 != y0)
+            n++;
+        if (y + 1 < n && (matrix[x, y + 1] == 12 || matrix[x, y + 1] == -1) && y + 1 != y0)
+            n++;
+        return n;
     }
 
     public void GenerateMatrix(int seed)
@@ -138,25 +143,18 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                if (x - 1 >= 0 && matrix[x - 1, y] == 12 && !RoadNeighbours(x - 1, y)) matrix[x, y] = 12;
-                else if (x + 1 < n && matrix[x + 1, y] == 12 && !RoadNeighbours(x + 1, y)) matrix[x, y] = 12;
-                else if (y - 1 >= 0 && matrix[x, y - 1] == 12 && !RoadNeighbours(x, y - 1)) matrix[x, y] = 12;
-                else if (y + 1 < n && matrix[x, y + 1] == 12 && !RoadNeighbours(x, y + 1)) matrix[x, y] = 12;
+                if (x - 1 >= 0 && matrix[x - 1, y] == 12 && RoadNeighbours(x - 1, y, x, y) < 2)
+                    matrix[x, y] = 12;
+                else if (x + 1 < n && matrix[x + 1, y] == 12 && RoadNeighbours(x + 1, y, x, y) < 2)
+                    matrix[x, y] = 12;
+                else if (y - 1 >= 0 && matrix[x, y - 1] == 12 && RoadNeighbours(x, y - 1, x, y) < 2)
+                    matrix[x, y] = 12;
+                else if (y + 1 < n && matrix[x, y + 1] == 12 && RoadNeighbours(x, y + 1, x, y) < 2)
+                    matrix[x, y] = 12;
                 else
                 {
-
                     int[] temp = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-                    for (int j = 0; j < 13; j++)
-                    {
-                        if (_count[j] <= 0) temp[j] = 0;
-                    }
-
-                    // string str = "";
-                    // foreach (var i in Neighbours(x, y))
-                    // {
-                    //     str += " " + i;
-                    // }
-                    // print(str);
+                    for (int j = 0; j < 13; j++) if (_count[j] <= 0) temp[j] = 0;
                     var vasdasd = Neighbours(x, y);
                     foreach (int i in vasdasd)
                     {
@@ -165,7 +163,6 @@ public class GameManager : MonoBehaviour
                             if (_neighborhood.matrix[i, j] == 0) temp[j] = 0;
                         }
                     }
-
                     List<int> choice = new List<int>();
                     for (int i = 0; i < 13; i++)
                     {
@@ -179,14 +176,13 @@ public class GameManager : MonoBehaviour
                     }
                     else matrix[x, y] = 0;
                 }
-                // print(x + " " + y);
                 _count[matrix[x, y]]--;
                 string tempString = "";
                 foreach (var elem in _count)
                 {
                     tempString += " " + elem;
                 }
-                // print(tempString);
+                print(tempString);
             }
         }
 

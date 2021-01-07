@@ -16,16 +16,22 @@ public class CameraController : MonoBehaviour
     // private Rigidbody _rb;
 
     [Header("Ограничения")] public Vector2 upperLimit = new Vector2(3, 10);
-    public Vector2 rightLimit;
-    public Vector2 leftLimit;
+    private Vector2 _rightLimit;
+    private Vector2 _leftLimit;
 
     private Vector3 _mousePos;
     private float _myAngle = 0;
     public float sensitivity = 1;
+
+    private GameManager _gm;
     
     void Awake()
     {
         _cameraTransformation = GetComponentInChildren<Transform>();
+        _gm = GameObject.Find("Generator").GetComponent<GameManager>();
+        GameObject.Find("Ground").transform.localScale = new Vector3(_gm.gridSize.x / 10, 1, _gm.gridSize.y / 10);
+        _rightLimit = new Vector2(-2, _gm.gridSize.x + 2);
+        _leftLimit = new Vector2(-2, _gm.gridSize.y + 2);
     }
 
     // Update is called once per frame
@@ -39,18 +45,18 @@ public class CameraController : MonoBehaviour
         transform.Translate(new Vector3(movementSpeed * dx, movementSpeed * upMul, movementSpeed * dy));
         var position = transform.position;
         // Этот блок - ограничение позиции камеры
-        if (position.x < rightLimit.x)
-            position = new Vector3(rightLimit.x, position.y, position.z);
-        else if (position.x > rightLimit.y) 
-            position = new Vector3(rightLimit.y, position.y, position.z);
+        if (position.x < _rightLimit.x)
+            position = new Vector3(_rightLimit.x, position.y, position.z);
+        else if (position.x > _rightLimit.y) 
+            position = new Vector3(_rightLimit.y, position.y, position.z);
         if (position.y < upperLimit.x)
             position = new Vector3(position.x, upperLimit.x, position.z);
         else if (position.y > upperLimit.y)
             position = new Vector3(position.x, upperLimit.y, position.z);
-        if  (position.z < leftLimit.x)
-            position = new Vector3(position.x, position.y, leftLimit.x);
-        else if (position.z > leftLimit.y)
-            position = new Vector3(position.x, position.y, leftLimit.y);
+        if  (position.z < _leftLimit.x)
+            position = new Vector3(position.x, position.y, _leftLimit.x);
+        else if (position.z > _leftLimit.y)
+            position = new Vector3(position.x, position.y, _leftLimit.y);
         
         transform.position = position;
         
