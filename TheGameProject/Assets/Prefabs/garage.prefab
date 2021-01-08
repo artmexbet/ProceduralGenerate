@@ -46,6 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainRenderer: {fileID: 6872042866738771248}
   size: {x: 2, y: 2}
+  type: 3
+  personType: 2
 --- !u!1 &6609396766275135633
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = System.Random;
 
 public class GameManager : MonoBehaviour
@@ -22,6 +24,17 @@ public class GameManager : MonoBehaviour
     private GenerateNeighborhood _neighborhood;
 
     [Header("Префабы")] public List<Building> prefabs;
+
+    public static List<Building> Heal = new List<Building>();
+    public static List<Building> PoorFood = new List<Building>();
+    public static List<Building> MidFood = new List<Building>();
+    public static List<Building> RichFood = new List<Building>();
+    public static List<Building> PoorHappy = new List<Building>();
+    public static List<Building> MidHappy = new List<Building>();
+    public static List<Building> RichHappy = new List<Building>();
+    public static List<Building> PoorHouse = new List<Building>();
+    public static List<Building> MidHouse = new List<Building>();
+    public static List<Building> RichHouse = new List<Building>();
 
     private void Awake()
     {
@@ -143,55 +156,29 @@ public class GameManager : MonoBehaviour
     }
     void roads(int x, int y)
     {
-            if (x - 1 >= 0 && matrix[x - 1, y] == 12 && RoadNeighbours(x - 1, y, x, y) < 2)
-                matrix[x, y] = 12;
-            else
-                if (x + 1 < n && matrix[x + 1, y] == 12 && RoadNeighbours(x + 1, y, x, y) < 2)
-                matrix[x, y] = 12;
-            else
-                    if (y - 1 >= 0 && matrix[x, y - 1] == 12 && RoadNeighbours(x, y - 1, x, y) < 2)
-                matrix[x, y] = 12;
-            else
-                        if (y + 1 < n && matrix[x, y + 1] == 12 && RoadNeighbours(x, y + 1, x, y) < 2)
-                matrix[x, y] = 12;
-            else
-            {
-                List<int> choice = new List<int>();
-                if (_count[12] > 0) choice.Add(12);
-                choice.Add(0); 
-                int _temp = random.Next(choice.Count);
-                matrix[x, y] = choice[_temp];
-            }
-        
+        if (x - 1 >= 0 && matrix[x - 1, y] == 12 && RoadNeighbours(x - 1, y, x, y) < 2)
+            matrix[x, y] = 12;
+        else if (x + 1 < n && matrix[x + 1, y] == 12 && RoadNeighbours(x + 1, y, x, y) < 2)
+            matrix[x, y] = 12;
+        else if (y - 1 >= 0 && matrix[x, y - 1] == 12 && RoadNeighbours(x, y - 1, x, y) < 2)
+            matrix[x, y] = 12;
+        else if (y + 1 < n && matrix[x, y + 1] == 12 && RoadNeighbours(x, y + 1, x, y) < 2)
+            matrix[x, y] = 12;
+        else
+        {
+            List<int> choice = new List<int>();
+            if (_count[12] > 0) choice.Add(12);
+            choice.Add(0); 
+            int _temp = random.Next(choice.Count);
+            matrix[x, y] = choice[_temp];
+        }
         _count[matrix[x, y]]--;
     }
     public void GenerateMatrix()
     {
+        ClearMatrix();
         //генерация дорог с пустотами
         int N = gridSize.x;
-        /*for (int t = 0; t < (N + 1) / 2; t++)
-        {
-            for (int j = t; j < N - t; j++)
-            {
-                roads(t, j);
-                
-            }
-            for (int i = t + 1; i < N - t; i++)
-            {
-                roads(i, N - 1 - t);
-                
-            }
-            for (int j = N - 2 - t; j >= t; j--)
-            {
-                roads(N - 1 - t, j);
-                
-            }
-            for (int i = N - 2 - t; i > t; i--)
-            {
-                roads(i, t);
-                
-            }
-        }*/
         int size = gridSize.x;
 
         int halfsize = size/2,counter=size*size;
@@ -211,7 +198,7 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                if (matrix[x, y]!=12)
+                if (matrix[x, y] != 12)
                 {
                     int[] temp = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
                     for (int j = 0; j < 13; j++) if (_count[j] <= 0) temp[j] = 0;
@@ -251,5 +238,59 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        GetComponent<NavMeshSurface>().BuildNavMesh();
+        GetComponent<PersonManager>().StartSpawn();
+    }
+
+    void ClearMatrix()
+    {
+        foreach (var i in PersonManager.PoorPersons)
+        {
+            Destroy(i.gameObject);
+        }
+        foreach (var i in PersonManager.MidPersons)
+        {
+            Destroy(i.gameObject);
+        }
+        foreach (var i in PersonManager.RichPersons)
+        {
+            Destroy(i.gameObject);
+        }
+        foreach (var building in _grid)
+        {
+            if (building != null) Destroy(building.gameObject);
+        }
+
+        random = new Random(seed);
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                matrix[x, y] = -1;
+            }
+        }
+        
+        int newN = gridSize.x * gridSize.y;
+        _count = new[]
+        {
+            Mathf.RoundToInt(0.5f * newN), 1, Mathf.RoundToInt(0.2f * newN), Mathf.RoundToInt(0.05f * newN),
+            Mathf.RoundToInt(0.05f * newN), Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.01f * newN),
+            Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.2f * newN),
+            Mathf.RoundToInt(0.1f * newN), Mathf.RoundToInt(0.05f * newN), Mathf.RoundToInt(0.5f * newN),
+        };
+        
+        Heal = new List<Building>();
+        PoorFood = new List<Building>();
+        MidFood = new List<Building>();
+        RichFood = new List<Building>();
+        PoorHappy = new List<Building>();
+        MidHappy = new List<Building>();
+        RichHappy = new List<Building>();
+        PoorHouse = new List<Building>();
+        MidHouse = new List<Building>();
+        RichHouse = new List<Building>();
+        PersonManager.MidPersons = new List<Person>();
+        PersonManager.PoorPersons = new List<Person>();
+        PersonManager.RichPersons = new List<Person>();
     }
 }

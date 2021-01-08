@@ -4,34 +4,27 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class UI : MonoBehaviour
 {
-    public int seed;
-    private bool _played = false;
-    private GameManager _gm;
-    
-
-    private void Awake()
-    {
-        seed =  Random.Range(1000, 9999);
-        _gm = GameObject.Find("Generator").GetComponent<GameManager>();
-    }
+    public bool played = false;
 
     public void Play(GameObject eventObject)
     {
-        if (_played)
+        if (played)
         {
             eventObject.GetComponentInChildren<Text>().text = "Play";
             print("Stopped");
+            Time.timeScale = 0;
         }
         else
         {
             eventObject.GetComponentInChildren<Text>().text = "Stop";
             print("Played");
+            Time.timeScale = 1;
         }
-        _played = !_played;
+        played = !played;
     }
 }

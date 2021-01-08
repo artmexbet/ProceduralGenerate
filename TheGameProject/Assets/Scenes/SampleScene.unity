@@ -106,15 +106,15 @@ NavMeshSettings:
   m_BuildSettings:
     serializedVersion: 2
     agentTypeID: 0
-    agentRadius: 0.5
+    agentRadius: 0.1
     agentHeight: 2
-    agentSlope: 45
-    agentClimb: 0.4
+    agentSlope: 30
+    agentClimb: 0.25
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
-    minRegionArea: 2
+    minRegionArea: 0.1
     manualCellSize: 0
-    cellSize: 0.16666667
+    cellSize: 0.033333335
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df8f472932ad4134e881d386dd48f1f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 0
+  played: 0
 --- !u!114 &1127239712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1697,6 +1697,8 @@ GameObject:
   - component: {fileID: 1665963913}
   - component: {fileID: 1665963912}
   - component: {fileID: 1665963914}
+  - component: {fileID: 1665963915}
+  - component: {fileID: 1665963916}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -1717,7 +1719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridSize: {x: 50, y: 50}
-  seed: 50545492
+  seed: 0
   prefabs:
   - {fileID: 7785147456425118569, guid: 6164d116c185e8449be60b75d4b3d3d0, type: 3}
   - {fileID: 7785147456425118569, guid: 8e215de7c09574246b364eb3a977d38a, type: 3}
@@ -1725,7 +1727,7 @@ MonoBehaviour:
   - {fileID: 7785147456425118569, guid: d9d0829fc06ca704e955b8be959428c0, type: 3}
   - {fileID: 7785147456425118569, guid: 48319545084207d418fe21c48eff2b52, type: 3}
   - {fileID: 7785147456425118569, guid: 789e8a4718927b84eaa1d1fe4e8795ee, type: 3}
-  - {fileID: 7785147456425118569, guid: 953155cd546dfa443a1ef31e73afe57b, type: 3}
+  - {fileID: 7785147456425118569, guid: 1747b39c9f903fb4ea99fdfefce64ea3, type: 3}
   - {fileID: 7785147456425118569, guid: a015a5040d1636f4b8aec4e8d77dac42, type: 3}
   - {fileID: 7785147456425118569, guid: ae9a73fecf98ae54491d75c246b257ac, type: 3}
   - {fileID: 7785147456425118569, guid: 74a38ea869cdab04fa084d73cd51ef51, type: 3}
@@ -1758,6 +1760,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea2643526df1e434c9e397157705caf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1665963915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665963911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.033333335
+  m_BuildHeightMesh: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!114 &1665963916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665963911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e950d4c3554c0c498b4d7d5bc45dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  persons:
+  - {fileID: 438574196138555710, guid: e6291793a05e9a04685c6296d14933bd, type: 3}
+  - {fileID: 438574196138555710, guid: d45f73fd89ea52548b72bc4babb233e4, type: 3}
+  - {fileID: 438574196138555710, guid: 732f9437a42d3fe4d921d2c885f1ce36, type: 3}
 --- !u!1 &1835310450
 GameObject:
   m_ObjectHideFlags: 0

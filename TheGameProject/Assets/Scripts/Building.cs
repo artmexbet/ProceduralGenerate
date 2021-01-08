@@ -1,7 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+
+public enum BuildingType
+{
+    Eat,
+    Heal,
+    Happy,
+    House,
+    Other
+}
 
 public class Building : MonoBehaviour
 {
@@ -9,9 +19,33 @@ public class Building : MonoBehaviour
     public Vector2Int size = Vector2Int.one;
     private Color _baseColor;
 
+    public BuildingType type = BuildingType.Other;
+    public PersonType personType = PersonType.Poor;
+
+    public int bonus = 15;
+
     public void Awake()
     {
         _baseColor = mainRenderer.material.color;
+        if (type == BuildingType.Heal) GameManager.Heal.Add(this);
+        switch (personType)
+        {
+            case PersonType.Rich:
+                if (type == BuildingType.Eat) GameManager.RichFood.Add(this);
+                else if(type == BuildingType.Happy) GameManager.RichHappy.Add(this);
+                else if(type == BuildingType.House) GameManager.RichHouse.Add(this);
+                break;
+            case PersonType.Middle:
+                if (type == BuildingType.Eat) GameManager.MidFood.Add(this);
+                else if(type == BuildingType.Happy) GameManager.MidHappy.Add(this);
+                else if(type == BuildingType.House) GameManager.MidHouse.Add(this);
+                break;
+            case PersonType.Poor:
+                if (type == BuildingType.Eat) GameManager.PoorFood.Add(this);
+                else if(type == BuildingType.Happy) GameManager.PoorHappy.Add(this);
+                else if(type == BuildingType.House) GameManager.PoorHouse.Add(this);
+                break;
+        }
     }
 
     public void SetTransparent(bool available)
@@ -36,5 +70,33 @@ public class Building : MonoBehaviour
                 Gizmos.DrawCube(transform.position + new Vector3(x, 0, y), new Vector3(1, 0.1f, 1));
             }
         }
+    }
+
+    public void AddBonus(Person person)
+    {
+        switch (type)
+        {
+            case BuildingType.Eat:
+                AddEat(person);
+                break;
+            case BuildingType.Happy:
+                AddHappy(person);
+                break;
+            case BuildingType.Heal:
+                AddHealth(person);
+                break;
+        }
+    }
+    public void AddEat(Person person)
+    {
+        person.AddEat(bonus);
+    }
+    public void AddHappy(Person person)
+    {
+        person.AddHappy(bonus);
+    }
+    public void AddHealth(Person person)
+    {
+        person.AddHealth(bonus);
     }
 }
