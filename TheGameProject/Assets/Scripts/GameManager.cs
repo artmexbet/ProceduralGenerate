@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 {
     public Vector2Int gridSize = new Vector2Int(15, 15);
 
+    public int seed=100;
+    Random random;
+    
     private Building[,] _grid;
     public int[,] matrix;
     
@@ -18,7 +21,7 @@ public class GameManager : MonoBehaviour
     private int n;
     private GenerateNeighborhood _neighborhood;
 
-    [Header("Префабы")] public List<GameObject> prefabs;
+    [Header("Префабы")] public List<Building> prefabs;
 
     private void Awake()
     {
@@ -26,6 +29,8 @@ public class GameManager : MonoBehaviour
         _mainCamera = Camera.main;
         
         matrix = new int[gridSize.x, gridSize.y];
+        
+        random = new Random(seed);
         
         for (int x = 0; x < gridSize.x; x++)
         {
@@ -36,12 +41,13 @@ public class GameManager : MonoBehaviour
         }
         
         n = gridSize.x;
-        int newN = n * n;
+        int newN = gridSize.x * gridSize.y;
         _count = new[]
         {
-            Mathf.RoundToInt(0.3f * newN), 1, Mathf.RoundToInt(0.2f * newN),
-            3, 2, 3, Mathf.RoundToInt(0.05f * newN), 2, 2, Mathf.RoundToInt(0.3f * newN),
-            Mathf.RoundToInt(0.2f * newN), Mathf.RoundToInt(0.1f * newN), Mathf.RoundToInt(0.3f * newN),
+            Mathf.RoundToInt(0.5f * newN), 1, Mathf.RoundToInt(0.2f * newN), Mathf.RoundToInt(0.05f * newN),
+            Mathf.RoundToInt(0.05f * newN), Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.01f * newN),
+            Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.01f * newN), Mathf.RoundToInt(0.2f * newN),
+            Mathf.RoundToInt(0.1f * newN), Mathf.RoundToInt(0.05f * newN), Mathf.RoundToInt(0.5f * newN),
         };
 
         _neighborhood = GetComponent<GenerateNeighborhood>();
@@ -111,14 +117,14 @@ public class GameManager : MonoBehaviour
     List<int> Neighbours(int x, int y)
     {
         List<int> tempMatrix = new List<int>();
-        if (x - 1 >= 0 && y - 1 >= 0 && matrix[x - 1, y - 1] != -1) tempMatrix.Add(matrix[x - 1, y - 1]);
-        if (x - 1 >= 0 && matrix[x - 1, y] != -1) tempMatrix.Add(matrix[x - 1, y]);
-        if (x - 1 >= 0 && y + 1 < n && matrix[x - 1, y + 1] != -1) tempMatrix.Add(matrix[x - 1, y + 1]);
-        if (y - 1 >= 0 && matrix[x, y - 1] != -1) tempMatrix.Add(matrix[x, y - 1]);
-        if (y + 1 < n && matrix[x, y + 1] != -1) tempMatrix.Add(matrix[x, y + 1]);
-        if (x + 1 < n && y - 1 >= 0 && matrix[x + 1, y - 1] != -1) tempMatrix.Add(matrix[x + 1, y - 1]);
-        if (x + 1 < n && matrix[x + 1, y] != -1) tempMatrix.Add(matrix[x + 1, y]);
-        if (x + 1 < n && y + 1 < n && matrix[x + 1, y + 1] != -1) tempMatrix.Add(matrix[x + 1, y + 1]);
+        if (x - 1 >= 0 && y - 1 >= 0) tempMatrix.Add(matrix[x - 1, y - 1]);
+        if (x - 1 >= 0) tempMatrix.Add(matrix[x - 1, y]);
+        if (x - 1 >= 0 && y + 1 < gridSize.x) tempMatrix.Add(matrix[x - 1, y + 1]);
+        if (y - 1 >= 0) tempMatrix.Add(matrix[x, y - 1]);
+        if (y + 1 < gridSize.x) tempMatrix.Add(matrix[x, y + 1]);
+        if (x + 1 < gridSize.x && y - 1 >= 0) tempMatrix.Add(matrix[x + 1, y - 1]);
+        if (x + 1 < gridSize.x) tempMatrix.Add(matrix[x + 1, y]);
+        if (x + 1 < gridSize.x && y + 1 < gridSize.x) tempMatrix.Add(matrix[x + 1, y + 1]);
         return tempMatrix;
     }
 
@@ -135,28 +141,82 @@ public class GameManager : MonoBehaviour
             n++;
         return n;
     }
-
-    public void GenerateMatrix(int seed)
+    void roads(int x, int y)
     {
-        Random random = new Random(seed);
+            if (x - 1 >= 0 && matrix[x - 1, y] == 12 && RoadNeighbours(x - 1, y, x, y) < 2)
+                matrix[x, y] = 12;
+            else
+                if (x + 1 < n && matrix[x + 1, y] == 12 && RoadNeighbours(x + 1, y, x, y) < 2)
+                matrix[x, y] = 12;
+            else
+                    if (y - 1 >= 0 && matrix[x, y - 1] == 12 && RoadNeighbours(x, y - 1, x, y) < 2)
+                matrix[x, y] = 12;
+            else
+                        if (y + 1 < n && matrix[x, y + 1] == 12 && RoadNeighbours(x, y + 1, x, y) < 2)
+                matrix[x, y] = 12;
+            else
+            {
+                List<int> choice = new List<int>();
+                if (_count[12] > 0) choice.Add(12);
+                choice.Add(0); 
+                int _temp = random.Next(choice.Count);
+                matrix[x, y] = choice[_temp];
+            }
+        
+        _count[matrix[x, y]]--;
+    }
+    public void GenerateMatrix()
+    {
+        //генерация дорог с пустотами
+        int N = gridSize.x;
+        /*for (int t = 0; t < (N + 1) / 2; t++)
+        {
+            for (int j = t; j < N - t; j++)
+            {
+                roads(t, j);
+                
+            }
+            for (int i = t + 1; i < N - t; i++)
+            {
+                roads(i, N - 1 - t);
+                
+            }
+            for (int j = N - 2 - t; j >= t; j--)
+            {
+                roads(N - 1 - t, j);
+                
+            }
+            for (int i = N - 2 - t; i > t; i--)
+            {
+                roads(i, t);
+                
+            }
+        }*/
+        int size = gridSize.x;
+
+        int halfsize = size/2,counter=size*size;
+        for(int i = 0;i<=halfsize;i++){
+
+            for(int j = size-i-1;j>i;j--) roads(j, i);
+
+            for(int j = i;j<=size-i-1;j++) roads(i, j);
+
+            for(int j = i+1;j<=size-i-1;j++) roads(j, size-1-i);
+
+            for(int j = size-2-i;j>i;j--) roads(size-1-i, j);
+        }
+
+        //генерация зданий
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                if (x - 1 >= 0 && matrix[x - 1, y] == 12 && RoadNeighbours(x - 1, y, x, y) < 2)
-                    matrix[x, y] = 12;
-                else if (x + 1 < n && matrix[x + 1, y] == 12 && RoadNeighbours(x + 1, y, x, y) < 2)
-                    matrix[x, y] = 12;
-                else if (y - 1 >= 0 && matrix[x, y - 1] == 12 && RoadNeighbours(x, y - 1, x, y) < 2)
-                    matrix[x, y] = 12;
-                else if (y + 1 < n && matrix[x, y + 1] == 12 && RoadNeighbours(x, y + 1, x, y) < 2)
-                    matrix[x, y] = 12;
-                else
+                if (matrix[x, y]!=12)
                 {
-                    int[] temp = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+                    int[] temp = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
                     for (int j = 0; j < 13; j++) if (_count[j] <= 0) temp[j] = 0;
-                    var vasdasd = Neighbours(x, y);
-                    foreach (int i in vasdasd)
+                    var sosedi = Neighbours(x, y);
+                    foreach (int i in sosedi)
                     {
                         for (int j = 0; j < 13; j++)
                         {
@@ -164,25 +224,18 @@ public class GameManager : MonoBehaviour
                         }
                     }
                     List<int> choice = new List<int>();
-                    for (int i = 0; i < 13; i++)
+                    for (int j = 0; j < 13; j++)
                     {
-                        if (temp[i] != 0) choice.Add(i);
+                        if (temp[j] != 0) choice.Add(j);
                     }
-
                     if (choice.Count != 0)
                     {
                         int _temp = random.Next(choice.Count);
                         matrix[x, y] = choice[_temp];
                     }
                     else matrix[x, y] = 0;
+                    _count[matrix[x, y]]--;
                 }
-                _count[matrix[x, y]]--;
-                string tempString = "";
-                foreach (var elem in _count)
-                {
-                    tempString += " " + elem;
-                }
-                print(tempString);
             }
         }
 
@@ -190,8 +243,12 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                var temp = Instantiate(prefabs[matrix[x, y]]);
-                temp.transform.position = new Vector3(x * 5, 0, y * 5);
+                if (matrix[x, y] != 0)
+                {
+                    var temp = Instantiate(prefabs[matrix[x, y]]);
+                    temp.transform.position = new Vector3(x, 0, y);
+                    _grid[x, y] = temp;
+                }
             }
         }
     }
